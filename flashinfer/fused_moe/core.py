@@ -633,6 +633,8 @@ def get_cutlass_fused_moe_module(backend: str = "100", use_fast_build: bool = Fa
         swiglu_alpha: Optional[torch.Tensor] = None,
         swiglu_beta: Optional[torch.Tensor] = None,
         swiglu_limit: Optional[torch.Tensor] = None,
+        situ_beta: Optional[torch.Tensor] = None,
+        situ_linear_beta: Optional[torch.Tensor] = None,
         swizzled_input_sf: bool = True,
         tp_size: int = 1,
         tp_rank: int = 0,
@@ -764,6 +766,8 @@ def get_cutlass_fused_moe_module(backend: str = "100", use_fast_build: bool = Fa
             swiglu_alpha,
             swiglu_beta,
             swiglu_limit,
+            situ_beta,
+            situ_linear_beta,
             swizzled_input_sf,
             *min_latency_output,
             tp_size,
@@ -807,6 +811,8 @@ def get_cutlass_fused_moe_module(backend: str = "100", use_fast_build: bool = Fa
         swiglu_alpha: Optional[torch.Tensor] = None,
         swiglu_beta: Optional[torch.Tensor] = None,
         swiglu_limit: Optional[torch.Tensor] = None,
+        situ_beta: Optional[torch.Tensor] = None,
+        situ_linear_beta: Optional[torch.Tensor] = None,
         swizzled_input_sf: bool = True,
         tp_size: int = 1,
         tp_rank: int = 0,
@@ -934,6 +940,8 @@ def cutlass_fused_moe(
     swiglu_alpha: Optional[torch.Tensor] = None,
     swiglu_beta: Optional[torch.Tensor] = None,
     swiglu_limit: Optional[torch.Tensor] = None,
+    situ_beta: Optional[torch.Tensor] = None,
+    situ_linear_beta: Optional[torch.Tensor] = None,
     tp_size: int = 1,
     tp_rank: int = 0,
     ep_size: int = 1,
@@ -1026,6 +1034,14 @@ def cutlass_fused_moe(
 
     swiglu_limit : Optional[torch.Tensor]
         Swiglu limit for swiglu activation.
+
+    situ_beta : Optional[torch.Tensor]
+        Per-expert ``beta`` tanh scale for the ``Situ`` activation (float32,
+        ``[num_experts_on_rank]``). ``None`` uses ``DEFAULT_SITU_BETA``.
+
+    situ_linear_beta : Optional[torch.Tensor]
+        Per-expert ``linear_beta`` tanh scale for the ``Situ`` activation (float32,
+        ``[num_experts_on_rank]``). ``None`` uses ``DEFAULT_SITU_LINEAR_BETA``.
 
     tp_size : int = 1
         Tensor parallelism size. Defaults to 1.
@@ -1196,6 +1212,8 @@ def cutlass_fused_moe(
             swiglu_alpha,
             swiglu_beta,
             swiglu_limit,
+            situ_beta,
+            situ_linear_beta,
             swizzled_input_sf,
             tp_size,
             tp_rank,
